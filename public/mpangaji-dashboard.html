@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mpangaji Dashboard</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .house-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .house-item {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .house-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .house-item h2 {
+            color: #333;
+            margin-top: 10px;
+        }
+        .house-item p {
+            color: #666;
+            margin: 5px 0;
+        }
+        .price {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .contact {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .filter-section {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .filter-section input, .filter-section button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .filter-section button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .filter-section button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Available Houses for Rent</h1>
+    </div>
+    
+    <div class="filter-section">
+        <input type="text" id="locationFilter" placeholder="Filter by location">
+        <button onclick="filterHouses()">Filter</button>
+        <button onclick="loadHouses()">Show All</button>
+    </div>
+    
+    <div class="house-list" id="houseList">
+        <!-- Houses will be loaded here dynamically -->
+    </div>
+
+    <script>
+        // Load houses when page loads
+        window.onload = function() {
+            loadHouses();
+        };
+        
+        // Function to load all houses
+        function loadHouses() {
+            fetch('/api/services')
+                .then(response => response.json())
+                .then(data => {
+                    displayHouses(data);
+                })
+                .catch(error => {
+                    console.error('Error loading houses:', error);
+                });
+        }
+        
+        // Function to filter houses by location
+        function filterHouses() {
+            const location = document.getElementById('locationFilter').value;
+            if (!location) {
+                loadHouses();
+                return;
+            }
+            
+            fetch(`/api/services?location=${encodeURIComponent(location)}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayHouses(data);
+                })
+                .catch(error => {
+                    console.error('Error filtering houses:', error);
+                });
+        }
+        
+        // Function to display houses in the UI
+        function displayHouses(houses) {
+            const houseList = document.getElementById('houseList');
+            houseList.innerHTML = '';
+            
+            if (houses.length === 0) {
+                houseList.innerHTML = '<p>No houses available at the moment.</p>';
+                return;
+            }
+            
+            houses.forEach(house => {
+                const houseElement = document.createElement('div');
+                houseElement.className = 'house-item';
+                houseElement.innerHTML = `
+                    ${house.image_url ?
+                        `<img src="${house.image_url}" alt="House ${house.nyumba_id}">` :
+                        `<img src="images/house${(house.nyumba_id % 4) + 1}.jpg" alt="House ${house.nyumba_id}">`}
+                    <h2>${house.house_type.charAt(0).toUpperCase() + house.house_type.slice(1)} Room</h2>
+                    <p class="price">Price: $${house.price}</p>
+                    <p>Location: ${house.location}</p>
+                    <p>Contact: ${house.contact}</p>
+                    <div class="contact">
+                        Contact: ${house.contact}
+                    </div>
+                `;
+                houseList.appendChild(houseElement);
+            });
+        }
+    </script>
+</body>
+</html>

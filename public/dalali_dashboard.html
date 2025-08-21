@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dalali Dashboard - Wapangaji</title>
+   
+    <style>
+        :root {
+            --primary: #28a745;
+            --primary-dark: #218838;
+            --secondary: #007bff;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary),rgb(0, 145, 255));
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin: 0;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card h3 {
+            color: var(--gray);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .upload-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            color: var(--dark);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .houses-container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .houses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .house-card {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .house-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .house-image {
+            height: 200px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-weight: bold;
+        }
+        
+        .house-details {
+            padding: 20px;
+        }
+        
+        .house-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .house-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .house-info {
+            margin-bottom: 15px;
+        }
+        
+        .house-info p {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .house-info i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-available {
+            background-color: rgba(40, 167, 69, 0.15);
+            color: var(--primary);
+        }
+        
+        .status-sold {
+            background-color: rgba(220, 53, 69, 0.15);
+            color: var(--danger);
+        }
+        
+        .house-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-sold {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .action-sold:hover {
+            background-color: #c82333;
+        }
+        
+        .action-delete {
+            background-color: var(--gray);
+            color: white;
+        }
+        
+        .action-delete:hover {
+            background-color: #5a6268;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-info {
+                text-align: center;
+                margin-top: 15px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .houses-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1><i class="fas fa-home"></i> Dalali Dashboard</h1>
+            <div class="user-info">
+                <p>Welcome, <strong>Dalali User</strong></p>
+                <p><small>Last login: Today</small></p>
+            </div>
+        </div>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Houses Listed</h3>
+                <div class="stat-value" id="totalHouses">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Available Houses</h3>
+                <div class="stat-value" id="availableHouses">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Sold Houses</h3>
+                <div class="stat-value" id="soldHouses">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Houses Remaining</h3>
+                <div class="stat-value" id="remainingHouses">5</div>
+            </div>
+        </div>
+        
+        <div class="upload-section">
+            <h2 class="section-title">List New House</h2>
+            <form id="houseForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="houseType"><i class="fas fa-bed"></i> House Type</label>
+                        <select id="houseType" required>
+                            <option value="">Select house type</option>
+                            <option value="master">Master Room</option>
+                            <option value="single">Single Room</option>
+                            <option value="double">Double Room</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location"><i class="fas fa-map-marker-alt"></i> Location</label>
+                        <input type="text" id="location" placeholder="Enter location" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact"><i class="fas fa-phone"></i> Contact</label>
+                        <input type="text" id="contact" placeholder="Enter contact number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="price"><i class="fas fa-tag"></i> Price (USD)</label>
+                        <input type="number" id="price" placeholder="Enter price" min="0" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="houseImage"><i class="fas fa-image"></i> House Image (Optional)</label>
+                        <input type="file" id="houseImage" accept="image/*">
+                        <input type="hidden" id="imageUrl" name="imageUrl">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-plus-circle"></i> List House
+                </button>
+            </form>
+        </div>
+        
+        <div class="houses-container">
+            <h2 class="section-title">My Listed Houses</h2>
+            <div class="houses-grid" id="houseList">
+                <!-- Houses will be loaded here dynamically -->
+                <div class="empty-state">
+                    <i class="fas fa-home"></i>
+                    <h3>No Houses Listed Yet</h3>
+                    <p>Start by listing your first house using the form above</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User ID - in a real app this would come from authentication
+        const userId = 1; // Placeholder - replace with actual user ID
+        
+        // Load houses when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHouses();
+        });
+        
+        // Function to load all houses for this user
+        function loadHouses() {
+            // In a real app, you would filter by user ID
+            fetch('/api/services')
+                .then(response => response.json())
+                .then(data => {
+                    // Filter to show only houses belonging to this user
+                    const userHouses = data.filter(house => house.user_id === userId);
+                    displayHouses(userHouses);
+                    updateStats(userHouses);
+                })
+                .catch(error => {
+                    console.error('Error loading houses:', error);
+                    showNotification('Error loading houses', 'error');
+                });
+        }
+        
+        // Function to update statistics
+        function updateStats(houses) {
+            const totalHouses = houses.length;
+            const availableHouses = houses.filter(house => house.status === 'available').length;
+            const soldHouses = houses.filter(house => house.status === 'sold_out').length;
+            const remainingHouses = 5 - availableHouses;
+            
+            document.getElementById('totalHouses').textContent = totalHouses;
+            document.getElementById('availableHouses').textContent = availableHouses;
+            document.getElementById('soldHouses').textContent = soldHouses;
+            document.getElementById('remainingHouses').textContent = remainingHouses;
+        }
+        
+        // Function to display houses in the UI
+        function displayHouses(houses) {
+            const houseList = document.getElementById('houseList');
+            
+            if (houses.length === 0) {
+                houseList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-home"></i>
+                        <h3>No Houses Listed Yet</h3>
+                        <p>Start by listing your first house using the form above</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            houseList.innerHTML = '';
+            
+            houses.forEach(house => {
+                const houseElement = document.createElement('div');
+                houseElement.className = 'house-card';
+                houseElement.innerHTML = `
+                    <div class="house-image">
+                        ${house.image_url ?
+                            `<img src="${house.image_url}" alt="House ${house.nyumba_id}" style="width:100%; height:100%; object-fit:cover;">` :
+                            `House Image ${house.nyumba_id}`}
+                    </div>
+                    <div class="house-details">
+                        <h3 class="house-title">${house.house_type.charAt(0).toUpperCase() + house.house_type.slice(1)} Room</h3>
+                        <div class="house-price">$${house.price}</div>
+                        <div class="house-info">
+                            <p><i class="fas fa-map-marker-alt"></i> ${house.location}</p>
+                            <p><i class="fas fa-phone"></i> ${house.contact}</p>
+                            <p><i class="fas fa-info-circle"></i> Status: <span class="status-badge status-${house.status === 'available' ? 'available' : 'sold'}">${house.status.replace('_', ' ')}</span></p>
+                        </div>
+                        <div class="house-actions">
+                            ${house.status === 'available' ? 
+                                `<button class="action-btn action-sold" onclick="markAsSoldOut(${house.nyumba_id})">
+                                    <i class="fas fa-times-circle"></i> Mark as Sold
+                                </button>` : 
+                                `<button class="action-btn action-sold" disabled>
+                                    <i class="fas fa-check-circle"></i> Already Sold
+                                </button>`}
+                            <button class="action-btn action-delete" onclick="deleteHouse(${house.nyumba_id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+                houseList.appendChild(houseElement);
+            });
+        }
+        
+        // Handle form submission
+        document.getElementById('houseForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const houseType = document.getElementById('houseType').value;
+            const location = document.getElementById('location').value;
+            const contact = document.getElementById('contact').value;
+            const price = document.getElementById('price').value;
+            const imageFile = document.getElementById('houseImage').files[0];
+            
+            // Validation
+            if (!houseType || !location || !contact || !price) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+            
+            let imageUrl = null;
+            
+            // Upload image if provided
+            if (imageFile) {
+                const formData = new FormData();
+                formData.append('image', imageFile);
+                
+                try {
+                    const uploadResponse = await fetch('/api/upload/image', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!uploadResponse.ok) {
+                        const errorData = await uploadResponse.json();
+                        throw new Error(errorData.error || 'Failed to upload image');
+                    }
+                    
+                    const uploadResult = await uploadResponse.json();
+                    imageUrl = uploadResult.filePath;
+                } catch (error) {
+                    console.error('Error uploading image:', error);
+                    showNotification('Error uploading image: ' + error.message, 'error');
+                    return;
+                }
+            }
+            
+            // Create house object
+            const houseData = {
+                uploaded_house: `House ${houseType}`, // Placeholder name
+                userId: userId,
+                house_type: houseType,
+                location: location,
+                contact: contact,
+                price: parseFloat(price),
+                image_url: imageUrl
+            };
+            
+            // Send to server
+            try {
+                const response = await fetch('/api/services', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(houseData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to list house');
+                }
+                
+                showNotification('House listed successfully!', 'success');
+                // Reset form
+                document.getElementById('houseForm').reset();
+                // Reload houses
+                loadHouses();
+            } catch (error) {
+                console.error('Error listing house:', error);
+                showNotification('Error listing house: ' + error.message, 'error');
+            }
+        });
+        
+        // Function to mark house as sold out
+        function markAsSoldOut(houseId) {
+            if (confirm('Are you sure you want to mark this house as sold out?')) {
+                fetch(`/api/services/${houseId}/sold-out`, {
+                    method: 'PATCH'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showNotification('Error: ' + data.error, 'error');
+                    } else {
+                        showNotification('House marked as sold out!', 'success');
+                        loadHouses();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error marking house as sold out:', error);
+                    showNotification('Error marking house as sold out', 'error');
+                });
+            }
+        }
+        
+        // Function to delete house
+        function deleteHouse(houseId) {
+            if (confirm('Are you sure you want to delete this house? This action cannot be undone.')) {
+                fetch(`/api/services/${houseId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showNotification('Error: ' + data.error, 'error');
+                    } else {
+                        showNotification('House deleted successfully!', 'success');
+                        loadHouses();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting house:', error);
+                    showNotification('Error deleting house', 'error');
+                });
+            }
+        }
+        
+        // Function to show notifications
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.padding = '15px 20px';
+            notification.style.borderRadius = '5px';
+            notification.style.color = 'white';
+            notification.style.fontWeight = 'bold';
+            notification.style.zIndex = '1000';
+            notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            
+            if (type === 'success') {
+                notification.style.backgroundColor = '#28a745';
+                notification.textContent = message;
+            } else {
+                notification.style.backgroundColor = '#dc3545';
+                notification.textContent = message;
+            }
+            
+            // Add to document
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

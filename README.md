@@ -1,0 +1,1 @@
+# wapangaji_smart
